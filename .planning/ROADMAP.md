@@ -13,7 +13,7 @@ A 3514-line monolithic `app.py` is refactored into a defensible Flask Blueprint 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation and Branch Safety** - Establish protected branches, app factory shell, and extensions module to prevent circular imports
+- [x] **Phase 1: Foundation and Branch Safety** - Establish protected branches, app factory shell, and extensions module to prevent circular imports (completed 2026-03-28)
 - [ ] **Phase 2: Service Layer Extraction** - Extract all business logic into Flask-free service modules (parallelizable across team)
 - [ ] **Phase 3: Blueprint Route Extraction** - Extract all route handlers into Flask Blueprints; verify all features still work
 - [ ] **Phase 4: App Factory Wiring and Tests** - Slim app.py to under 100 lines; prove service testability with passing pytest suite
@@ -40,7 +40,7 @@ Plans:
 
 - [x] 01-01-PLAN.md — Create 6 long-lived branches and .gitignore session file exclusions
 - [x] 01-02-PLAN.md — Create core/extensions.py and core/models.py (circular import prevention)
-- [ ] 01-03-PLAN.md — Wrap app.py in create_app() factory; smoke test all routes
+- [x] 01-03-PLAN.md — Wrap app.py in create_app() factory; smoke test all routes
 
 ### Phase 2: Service Layer Extraction
 
@@ -111,7 +111,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation and Branch Safety | 1/3 | In Progress|  |
+| 1. Foundation and Branch Safety | 3/3 | Complete   | 2026-03-28 |
 | 2. Service Layer Extraction | 0/TBD | Not started | - |
 | 3. Blueprint Route Extraction | 0/TBD | Not started | - |
 | 4. App Factory Wiring and Tests | 0/TBD | Not started | - |
