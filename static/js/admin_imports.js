@@ -355,7 +355,11 @@ document.addEventListener('DOMContentLoaded', function() {
         ocrItemsBody.innerHTML = items.map((item, idx) => `
             <tr data-index="${idx}">
                 <td>
-                    <input type="text" class="form-control form-control-sm ocr-product-name" value="${item.product_name || ''}" placeholder="Product name">
+                    <select class="form-select form-select-sm ocr-product-select" data-detected="${item.name || ''}">
+                        <option value="">-- Select or keep detected --</option>
+                        <option value="new" selected>${item.name || 'Unknown'} (new)</option>
+                        ${productOptions}
+                    </select>
                 </td>
                 <td>
                     <input type="number" class="form-control form-control-sm" value="${item.quantity || 1}" min="1">
@@ -383,12 +387,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const items = [];
             
             rows.forEach(row => {
-                const nameInput = row.querySelector('.ocr-product-name');
+                const select = row.querySelector('.ocr-product-select');
                 const qtyInput = row.querySelectorAll('input')[0];
                 const priceInput = row.querySelectorAll('input')[1];
                 
-                const productId = null;
-                const productName = nameInput ? nameInput.value.trim() || 'Unknown Product' : 'Unknown Product';
+                // If value is "new" or empty, we send null ID and the detected name
+                // If value is a number (ID), we send that ID
+                const isNew = select.value === 'new' || select.value === '';
+                const productId = isNew ? null : select.value;
+                const productName = select.dataset.detected || 'Unknown Product';
                 
                 items.push({
                     product_id: productId,
