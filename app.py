@@ -3346,9 +3346,16 @@ def ai_upload():
     if 'file' not in request.files: return jsonify({'error': 'No file'}), 400
     file = request.files['file']
     try:
-        with open('secrets/ai_config.json') as f:
-            ai_config = json.load(f)
-            hf_base_url = ai_config.get('HF_BASE_URL').rstrip('/')
+        hf_base_url = os.environ.get('HF_BASE_URL', '')
+        try:
+            with open('secrets/ai_config.json') as f:
+                ai_config = json.load(f)
+                hf_base_url = ai_config.get('HF_BASE_URL', hf_base_url)
+        except FileNotFoundError:
+            pass
+        if not hf_base_url:
+            return jsonify({'error': 'AI service not configured (missing HF_BASE_URL)'}), 503
+        hf_base_url = hf_base_url.rstrip('/')
             
         files = {'file': (file.filename, file.read(), file.mimetype)}
         data = {'user_id': current_user.id, 'store_id': 1}
@@ -3405,10 +3412,19 @@ def background_ai_task(job_id, user_id, message):
         mw = AgentMiddleware(db)
         history_str = db.get_ai_history(user_id, limit=6)
         
-        with open('secrets/ai_config.json') as f:
-            conf = json.load(f)
-            url = conf.get('HF_BASE_URL').rstrip('/') + '/chat'
-            token = conf.get('HF_TOKEN')
+        hf_base_url = os.environ.get('HF_BASE_URL', '')
+        token = os.environ.get('HF_TOKEN', '')
+        try:
+            with open('secrets/ai_config.json') as f:
+                conf = json.load(f)
+                hf_base_url = conf.get('HF_BASE_URL', hf_base_url)
+                token = conf.get('HF_TOKEN', token)
+        except FileNotFoundError:
+            pass
+        if not hf_base_url:
+            save_job_file(job_id, {"status": "error", "error": "AI service not configured (missing HF_BASE_URL)"})
+            return
+        url = hf_base_url.rstrip('/') + '/chat'
             
         system_context = mw.get_system_context()
         full_msg = f"[SYSTEM CONTEXT]\n{system_context}\n\n[CONVERSATION HISTORY]\n{history_str}\n\n[USER REQUEST]\n{message}"
